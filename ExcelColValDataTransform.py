@@ -30,6 +30,12 @@ def update_value(row, col_name):
 #Set col to str type 
 attribute_data[col_to_update] = attribute_data[col_to_update].astype(str)
 attribute_data[col_to_update] = attribute_data.apply(update_value, args=(col_to_update,),axis=1)
+
+#OUTPUT DATA CHECKS
+attribute_data.shape
+counts = attribute_data[col_to_update].value_counts()
+counts
+
 #write results to Excel
 with pd.ExcelWriter(export_file,
                     mode='a') as writer:  
