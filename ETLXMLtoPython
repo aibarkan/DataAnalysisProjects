@@ -1,0 +1,42 @@
+import xml.etree.ElementTree as ET
+import pandas as pd
+
+# Specify the file path to your XML file
+file_path = r"myfile"
+
+# Parse the XML file
+tree = ET.parse(file_path)
+root = tree.getroot()
+
+# Extract data from the XML
+data = []
+users = root.findall(".//User")  # Locate all <User> elements
+for user in users:
+    user_id = user.get("ID")
+    email = user.get("EMail")
+    name = user.find("Name").text if user.find("Name") is not None else None
+
+    # Append extracted information to the data list
+    data.append({
+        "ID": user_id,
+        "Email": email,
+        "Name": name
+    })
+
+# Convert the extracted data into a DataFrame
+df = pd.DataFrame(data)
+
+#Remove None/Empty
+# Remove rows where 'Email' is None or an empty string
+df = df[df['Email'].notna() & (df['Email'] != '')]
+df['Email'].count
+
+# Remove duplicates, but keep the first email
+df = df.drop_duplicates(subset='Email', keep='first')
+df['Email'].count
+
+# Convert all values to strings before joining with a semicolon
+distribution_list = ';'.join(df['Email'].map(str))
+
+# Print the distribution list
+print(distribution_list)
